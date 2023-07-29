@@ -1,0 +1,253 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+!define INTERFAZ_PACK #E2EFFF
+!define LOGICA_PACK #FFCCE5
+
+package "Interfaz" INTERFAZ_PACK {
+  class MenúPrincipal {
+    + dibujarMenu()
+    + dibujarBotonScore()
+    + dibujarModoDeJuego()
+  }
+  abstract class PersonajesInterfaz{
+  # {abstract} dibujarMovimientoArriba()
+  # {abstract} dibujarMovientoAbajo()
+  # {abstract} dibujarMovientoDerecha()
+  # {abstract} dibujarMovientoIzquierda()
+  # {abstract} dibujarMuerte()
+  }
+  class JugadorInterfaz{
+  + dibujarReinicioMuerte()
+  }
+  class MonstruoInterfaz{
+
+  }
+
+class Control {
+    - {static} teclado: Teclado
+  }
+  class GraficaPartida {
+   + dibujarComienzoDePartida(): void
+   + dibujarFinDePartida(): void
+
+  }
+  class MenuSuperior {
+    + dibujar()
+    + dibujarScore()
+    + dibujarPuntosScore()
+    + dibujarPuntosVida()
+    + dibujarPressStart()
+  }
+
+  class RecursoDeSonido {
+    + {static} cargarSonido(): Clip
+    + {static} cargarSonidoCambiarVolumen(): Clip
+  }
+
+  class Sonido {
+    - sonido: Clip
+    + reproducir(): void
+    + repetir(): void
+    + obtenerDuración(): void
+  }
+
+  class Tecla {
+    - pulsada: boolean
+    + teclaPulsada(): boolean
+    + teclaLiberada(): boolean
+    + estaPulsada(): boolean
+    + obtenerUltimaPulsación(): void
+  }
+
+  class Teclado {
+    - arriba: Tecla
+    - abajo: Tecla
+    - izquierda: Tecla
+    - derecha: Tecla
+    - soltarBomba: Tecla
+    + presionarTecla(): void
+    + liberarTecla(): void
+  }
+
+}
+
+package "Logica" LOGICA_PACK {
+  enum ModoDeJuego {
+    MODO_CLÁSICO,
+    MULTIJUGADOR
+  }
+
+enum Dirección {
+  ARRIBA,
+  ABAJO,
+  IZQUIERDA,
+  DERECHA
+}
+
+enum TipoPowerUp {
+  AUMENTAR_BOMBA,
+  INCREMENTAR_ALCANCE_BOMBA,
+  INCREMENTAR_VELOCIDAD,
+  ATRAVESAR_BLOQUE,
+  ATRAVESAR_BOMBA,
+  VIDA_EXTRA,
+  RESETEAR_TIEMPO
+}
+
+class Boomberman {}
+
+class Partida {
+  - {static} numeroDeJugadores: int
+  - {static} vidaActualDeJugador: int
+  - {static} puntajeActual: int
+  - {static} tiempo: int
+  + iniciarPartida(): void
+  + pausarPartida(): void
+  + reanudarPartida(): void7
+  + verificarMuerteMonstruo(): boolean
+  + actualizarPuntuación(): void
+  + verificarVidaActualDeJugador(): boolean
+  + actualizarVidaDeJugador(): void
+  + finDePartida(): void
+}
+
+class Nivel {
+  - numeroDeEnemigos: int
+  - tipoDeEnemigo: Monstruo
+  + crearNuevoLaberinto(): void // enviar parámetros
+}
+
+class Laberinto {
+  - numFilas: int
+  - numColumnas: int
+  - muro: char
+  - bloqueNoDestruible: char
+  - bloqueDestruible: char
+  - zonaLibre: char
+  - puerta: char
+  - zonaDeItem: char
+  + crearLaberinto(): void
+  + crearEspacioPowerUp(): void
+  + crearEspacioPuerta(): void
+  + agregarNuevoMonstruo(): void
+  + explosionAfectaPuerta(): boolean
+}
+
+class PowerUp {
+  - tipoPowerUp: TipoPowerUp
+  - haSidoProcesado: boolean
+  + asignarTipoDePowerUp(): void
+  + realizarProceso(): void
+}
+
+abstract class Monstruo {
+  - contadorCambioDirección: int
+  - golpesParaDestruir: int
+  # {abstract} obtenerPuntuación(): int
+  # {abstract} establecerGolpesParaDestruir(): int
+  # {abstract} establecerVelocidad(): void
+  + obtenerHitsParaDestruir(): int
+  + recibirImpacto(): void
+  + obtenerDirecciónAleatoria(): Dirección
+}
+
+class Fasty {
+}
+
+class Ovape {
+}
+
+class Valcom {
+
+}
+
+class BossFinal {
+  + lanzarAtaque(): void
+}
+
+abstract class Personaje{
+  - posicionX: double
+  - posicionY: double
+  - velocidad: double
+  - {static} vidaMaxima: int
+  - muerteDePersonaje: boolean
+  # {abstract} mover(): void
+  # {abstract} haMuertoElPersonaje(): boolean
+  # {abstract} obtenerVelocidad(): double
+
+}
+
+class Jugador {
+  - direccionMovimiento: int
+  + colocarBomba(): void
+  + evaluarVelocidadX(): void
+  + evaluarVelocidadY(): void
+  + mover(): void
+  + estáEnColision(): boolean
+  + fueraMapa(): boolean
+  + cambiarDireccion(): void
+  + ejecutarPowerUp(): void
+}
+
+
+class Bomba {
+  - detonar: boolean
+  - fuego: Fuego
+  - temporizador: Timer
+  + inicializarDetonación(): void
+  + detonar(): void
+  + haTerminadoExplosion(): boolean
+  + haTerminadoTiempo(): boolean
+  + haDetonado(): boolean
+  + perteneceA(jugador: Jugador): boolean
+}
+note bottom of Fasty
+  <b>Monstruo con alta velocidad
+end note
+note bottom of Ovape
+  <b>Monstruo de dos vidas
+end note
+note bottom of Valcom
+  <b>Monstruo básico
+end note
+note bottom of BossFinal
+  <b>Monstruo con estadísticas Potenciadas
+end note
+}
+
+'Personaje .u|> Control
+ModoDeJuego <-u- Boomberman
+MenúPrincipal --> Sonido
+Boomberman --> MenúPrincipal
+GraficaPartida --> Sonido
+GraficaPartida --> MenuSuperior
+MenúPrincipal --> GraficaPartida
+PowerUp --> TipoPowerUp
+Jugador --> "*" PowerUp
+Jugador --> Dirección
+Laberinto -->"1..2" Jugador
+Laberinto -->"+" Monstruo
+Jugador --|> Personaje
+Monstruo --|> Personaje
+Nivel -l-> Laberinto
+Partida -l-> "1..3" Nivel
+Partida .u.> ModoDeJuego
+Sonido --> RecursoDeSonido
+Teclado --> "*" Tecla
+Control --> Teclado
+Monstruo --> Dirección
+Valcom -u-|> Monstruo
+Fasty -u-|> Monstruo
+BossFinal -u-|>Monstruo
+Ovape -u-|> Monstruo
+Jugador --> Bomba
+GraficaPartida --> PersonajesInterfaz
+PersonajesInterfaz --|> JugadorInterfaz
+PersonajesInterfaz --|> MonstruoInterfaz
+Jugador ..> Control
+
+
+
+
+@enduml

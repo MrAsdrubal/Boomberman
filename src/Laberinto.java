@@ -1,7 +1,7 @@
 import java.util.Random;
 
 public class Laberinto {
-    //todo: Implementar posible try catch cuando haya dimensiones incorrectas. Talvez no sea necesario.
+
     private static final int FILAS = 10;
     private static final int COLUMNAS = 10;
     private static final char MURO = '#';

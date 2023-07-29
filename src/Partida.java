@@ -39,7 +39,7 @@ public class Partida {
     }
 
     private void finDePartida() {
-        // todo: conectar el fin de partida con la interfaz gráfica
+
         System.out.println("Se ha culminado la partida");
     }
 
